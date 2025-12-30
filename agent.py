@@ -69,6 +69,23 @@ class LeadQualificationAgent:
                 return "Short‑Term"
         return "Long‑Term"
 
+    def _normalize_mode(self, mode: Optional[str]) -> str:
+        """Normalize mode preference into Home, Online, Hybrid, or Unknown."""
+        if not mode:
+            return "Unknown"
+        mode_lower = mode.strip().lower()
+        if mode_lower in {"home", "offline", "in-person", "in person", "onsite"}:
+            return "Home"
+        if mode_lower in {"online", "virtual", "remote"}:
+            return "Online"
+        if mode_lower in {"hybrid", "blended"}:
+            return "Hybrid"
+        return "Unknown"
+
+    def _format_tag(self, value: str) -> str:
+        """Convert a label into a normalized tag slug."""
+        return value.lower().replace(" ", "-").replace("\u2011", "-")
+
     def _assess_subject_complexity(self, subjects: Optional[List[str]]) -> str:
         """Estimate subject complexity based on course names."""
         if not subjects:
@@ -107,7 +124,8 @@ class LeadQualificationAgent:
     def qualify_lead(self, lead: Dict[str, Any]) -> Dict[str, Any]:
         """Qualify the incoming lead and return a structured intelligence dict."""
         lead_id = lead.get("lead_id") or ""
-        mode = lead.get("mode_preference") or lead.get("mode") or "Unknown"
+        raw_mode = lead.get("mode_preference") or lead.get("mode")
+        mode = self._normalize_mode(raw_mode)
         subjects = lead.get("subjects") or []
         budget = lead.get("budget") or lead.get("budget_range")
         urgency = lead.get("urgency")
@@ -172,20 +190,20 @@ class LeadQualificationAgent:
             intent_level = "Low Intent"
         else:
             lead_quality_label = "Invalid"
-            intent_level = "Low Intent"
+            intent_level = "Invalid"
 
         # Decide recommended next agent based on score and urgency
         if lead_quality_label == "High":
             if urgency_level == "Immediate":
-                recommended_agent = "Tutor Matching Agent"
+                recommended_agent = "Tutor Matching"
             else:
-                recommended_agent = "Sales Closure Agent"
+                recommended_agent = "Sales Closure"
         elif lead_quality_label == "Medium":
-            recommended_agent = "Academic Counselor Agent"
+            recommended_agent = "Academic Counselor"
         elif lead_quality_label == "Low":
-            recommended_agent = "WhatsApp Nurture Agent"
+            recommended_agent = "WhatsApp Nurture"
         else:
-            recommended_agent = "Archive / Ignore Agent"
+            recommended_agent = "Archive / Ignore"
 
         # Confidence is proportional to how far the score is from the median (50)
         confidence_in_recommendation = round(abs(quality_score - 50) / 50 * 100)
@@ -195,10 +213,10 @@ class LeadQualificationAgent:
 
         # Memory tags for analytics (simple tags based on categories)
         memory_tags: List[str] = []
-        memory_tags.append(f"budget:{budget_category.lower()}")
-        memory_tags.append(f"urgency:{urgency_level.lower()}")
-        memory_tags.append(f"complexity:{subject_complexity.lower()}")
-        memory_tags.append(f"intent:{intent_level.lower().replace(' ', '-')}")
+        memory_tags.append(f"budget:{self._format_tag(budget_category)}")
+        memory_tags.append(f"urgency:{self._format_tag(urgency_level)}")
+        memory_tags.append(f"complexity:{self._format_tag(subject_complexity)}")
+        memory_tags.append(f"intent:{self._format_tag(intent_level)}")
         result: Dict[str, Any] = {
             "lead_id": lead_id,
             "lead_quality_score": quality_score,
@@ -213,7 +231,7 @@ class LeadQualificationAgent:
             "confidence_in_recommendation": confidence_in_recommendation,
             "reasoning_summary": reasoning_summary,
             "memory_tags": memory_tags,
-            "human_attention_required": False if lead_quality_label in {"High", "Medium"} else True,
+            "human_attention_required": lead_quality_label == "Invalid",
         }
 
         return result

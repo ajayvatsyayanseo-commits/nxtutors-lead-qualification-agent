@@ -5,10 +5,10 @@
   "intent_level": "High Intent",
   "urgency_level": "Immediate",
   "budget_range_inferred": "₹6000",
-  "preferred_mode": "home",
+  "preferred_mode": "Home",
   "subject_complexity": "Medium",
   "location_feasibility_score": 80,
-  "recommended_next_agent": "Tutor Matching Agent",
+  "recommended_next_agent": "Tutor Matching",
   "confidence_in_recommendation": 90,
   "reasoning_summary": "Medium budget suggests moderate affordability.; Immediate urgency indicates high intent.; Medium complexity subjects are common but significant.; Precise location makes home tutoring feasible.",
   "memory_tags": [
