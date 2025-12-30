@@ -1,0 +1,14 @@
+{
+  "lead_id": "demo001",
+  "student_name": "Ria",
+  "role": "Parent",
+  "class": "12",
+  "board": "CBSE",
+  "subjects": ["Physics", "Chemistry"],
+  "location": "Gurugram Sector 45",
+  "mode_preference": "home",
+  "urgency": "2 days",
+  "budget": "\u20b96000 per month",
+  "language_preference": "English",
+  "source": "SEO Landing Page"
+}
