@@ -1,0 +1,21 @@
+{
+  "lead_id": "demo001",
+  "lead_quality_score": 95,
+  "lead_quality_label": "High",
+  "intent_level": "High Intent",
+  "urgency_level": "Immediate",
+  "budget_range_inferred": "₹6000",
+  "preferred_mode": "home",
+  "subject_complexity": "Medium",
+  "location_feasibility_score": 80,
+  "recommended_next_agent": "Tutor Matching Agent",
+  "confidence_in_recommendation": 90,
+  "reasoning_summary": "Medium budget suggests moderate affordability.; Immediate urgency indicates high intent.; Medium complexity subjects are common but significant.; Precise location makes home tutoring feasible.",
+  "memory_tags": [
+    "budget:medium",
+    "urgency:immediate",
+    "complexity:medium",
+    "intent:high-intent"
+  ],
+  "human_attention_required": false
+}
